@@ -15,7 +15,8 @@ export type Playlist = {
 
 export type Artist = {
     id: number,
-    name: string
+    name: string,
+    followers: number
 }
 
 export type User = {

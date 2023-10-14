@@ -16,11 +16,13 @@ export let users: User[] = [
 export let artists: Artist[] = [
     {
         id: 1,
-        name: 'Odeon'
+        name: 'Odeon',
+        followers: 0
     },
     {
         id: 2,
-        name: 'Korn'
+        name: 'Korn',
+        followers: 0
     }
 ]
 

@@ -8,6 +8,21 @@ export function getUserById(id: number): types.User | undefined {
     return user
 }
 
+export function getUserIndexById(id: number): number{
+    let userIndex: number = users.findIndex((user) => {
+        return user.id === id
+    })
+    return userIndex
+}
+
+export function checkFollowers(index: number, artistId: number): boolean{
+    let alreadyFollow: number = users[index].artistsFollowingId.findIndex((id) => {
+        return id === artistId
+    })
+
+    return alreadyFollow === -1 ? false : true
+}
+
 export function getTrackById(id: number): types.Track | undefined {
     let track: types.Track | undefined = tracks.find((track) => {
         return track.id === id
@@ -20,6 +35,13 @@ export function getArtistById(id: number): types.Artist | undefined {
         return artist.id === id
     })
     return artist
+}
+
+export function getArtistIndexById(id: number){
+    let artistIndex: number = artists.findIndex((artist) => {
+        return artist.id === id
+    })
+    return artistIndex
 }
 
 export function getPlaylistById(id: number): types.Playlist | undefined {

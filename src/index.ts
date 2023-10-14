@@ -10,8 +10,20 @@ const app = express()
 app.use(express.json())
 app.use(cors())
 
+function verifyUser(id: number): boolean{
+    const user: types.User | undefined = searchData.getUserById(id)
+
+    return !user ? false : true
+}
+
 app.get('/allTracks', (req: Request, res: Response) => {
     try{
+        const userId: number = Number(req.headers.userid)
+
+        if(verifyUser(userId) === false){
+            res.status(401).send('headers missing, invalid or user not found')
+        }
+
         if(data.tracks.length === 0){
             res.status(404)
             throw new Error('No tracks found')
@@ -26,6 +38,12 @@ app.get('/allTracks', (req: Request, res: Response) => {
 
 app.get('/searchTrack/:id', (req: Request, res: Response) => {
     try{
+        const userId: number = Number(req.headers.userid)
+
+        if(verifyUser(userId) === false){
+            res.status(401).send('headers missing or invalid')
+        }
+
         const track: types.Track | undefined = searchData.getTrackById(Number(req.params.id))
         
         if(!track){
@@ -42,6 +60,12 @@ app.get('/searchTrack/:id', (req: Request, res: Response) => {
 
 app.post('/addTrack', (req: Request, res: Response) => {
     try{
+        const userId: number = Number(req.headers.userid)
+
+        if(verifyUser(userId) === false){
+            res.status(401).send('headers missing or invalid')
+        }
+
         const {id, name, artistId, url, idUserAdded} = req.body
         
         if(!id || !name || !artistId || !url || !idUserAdded){
@@ -59,7 +83,7 @@ app.post('/addTrack', (req: Request, res: Response) => {
         const artist: types.Artist | undefined = searchData.getArtistById(Number(artistId))
 
         if(!artist){
-            res.status(403)
+            res.status(300)
             throw new Error('The artist does not exist yet, add him first')
         }
 
@@ -79,8 +103,118 @@ app.post('/addTrack', (req: Request, res: Response) => {
     }
 })
 
+app.post('/addArtist', (req: Request, res: Response) => {
+    try{
+        const userId: number = Number(req.headers.userid)
+
+        if(verifyUser(userId) === false){
+            res.status(401).send('headers missing or invalid')
+        }
+
+        const {id, name} = req.body
+
+        if(!id || !name){
+            res.status(401)
+            throw new Error('Information is missing')
+        }
+
+        const artist: types.Artist | undefined = searchData.getArtistById(Number(id))
+
+        if(artist){
+            res.status(403)
+            throw new Error('Artist already exists')
+        }
+
+        const artistToAdd = {
+            id: id,
+            name: name,
+            followers: 0
+        }
+
+        data.artists.push(artistToAdd)
+        res.status(201).send('Artist added successfully')
+
+    }catch(error: any){
+        res.send(error.message)
+    } 
+})
+
+app.post('/addUser', (req: Request, res: Response) => {
+    try{
+        const {id, userName} = req.body
+
+        if(!id || !userName){
+            res.status(401)
+            throw new Error('Information is missing')
+        }
+
+        const user: types.User | undefined = searchData.getUserById(Number(id))
+
+        if(user){
+            res.status(403)
+            throw new Error('User already exists')
+        }
+
+        const userToAdd: types.User = {
+            id: id,
+            userName: userName,
+            artistsFollowingId: [] 
+        }
+
+        data.users.push(userToAdd)
+        res.status(201).send('User added successfully')
+
+    }catch(error: any){
+        res.send(error.message)
+    }
+})
+
+app.put('/followArtist/:id', (req: Request, res: Response) => {
+    try{
+        const userId: number = Number(req.headers.userid)
+
+        if(verifyUser(userId) === false){
+            res.status(401).send('headers missing or invalid')
+        }
+
+        const artistId: number = Number(req.params.id)
+
+        if(!artistId){
+            res.status(401)
+            throw new Error('Information is missing')
+        }
+
+        const artistIndex: number = searchData.getArtistIndexById(artistId)
+
+        if(artistIndex === -1){
+            res.status(404)
+            throw new Error('Artist not found')
+        }
+
+        const userIndex: number = searchData.getUserIndexById(userId)
+
+        if(searchData.checkFollowers(userIndex, artistId) === true){
+            res.status(403)
+            throw new Error('Do you already follow this artist')
+        }
+
+        data.artists[artistIndex].followers =+ 1
+        data.users[userIndex].artistsFollowingId.push(artistId)
+        res.status(200).send(`Are you following ${data.artists[artistIndex].name}`)
+
+    }catch(error: any){
+        res.send(error.message)
+    }
+})
+
 app.put('/updateNamePlaylist', (req: Request, res: Response) => {
     try{
+        const userId: number = Number(req.headers.userid)
+
+        if(verifyUser(userId) === false){
+            res.status(401).send('headers missing or invalid')
+        }
+
         const {id, name} = req.body
 
         if(!id || !name){
@@ -95,6 +229,13 @@ app.put('/updateNamePlaylist', (req: Request, res: Response) => {
             throw new Error('Playlist not found')
         }
 
+        const userIndex: number = searchData.getUserIndexById(userId)
+
+        if(data.playlists[playlistIndex].idUserCreated !== data.users[userIndex].id){
+            res.status(403)
+            throw new Error('You do not have permission to change this playlist')
+        }
+
         data.playlists[playlistIndex].name = name
         res.status(200).send('Name of the playlist altered successfully')
 
@@ -105,18 +246,31 @@ app.put('/updateNamePlaylist', (req: Request, res: Response) => {
 
 app.delete('/deletePlaylist/:id', (req: Request, res: Response) => {
     try{
-        const id = req.params.id
+        const userId: number = Number(req.headers.userid)
+
+        if(verifyUser(userId) === false){
+            res.status(401).send('headers missing or invalid')
+        }
+
+        const id = Number(req.params.id)
 
         if(!id){
             res.status(401)
             throw new Error('Information is missing')
         }
-
-        const playlistIndex: number = searchData.getPlaylistIndexById(Number(id))
+        
+        const playlistIndex: number = searchData.getPlaylistIndexById(id)
 
         if(playlistIndex === -1){
             res.status(404)
             throw new Error('Playlist not found')
+        }
+
+        const userIndex: number = searchData.getUserIndexById(userId)
+
+        if(data.playlists[playlistIndex].idUserCreated !== data.users[userIndex].id){
+            res.status(403)
+            throw new Error('You do not have permission to delete this playlist')
         }
     
         delete data.playlists[playlistIndex]
