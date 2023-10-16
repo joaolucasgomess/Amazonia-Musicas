@@ -68,7 +68,7 @@ app.post('/addTrack', (req: Request, res: Response) => {
 
         const {id, name, artistId, url, idUserAdded} = req.body
         
-        if(!id || !name || !artistId || !url || !idUserAdded){
+        if(!id || !name || !artistId || !url){
             res.status(401)
             throw new Error('Information is missing')
         }
@@ -92,7 +92,7 @@ app.post('/addTrack', (req: Request, res: Response) => {
             name: name,
             artistId: artistId,
             url: url,
-            idUserAdded: idUserAdded
+            idUserAdded: userId
         }
 
         data.tracks.push(trackToAdd)
@@ -193,7 +193,7 @@ app.put('/followArtist/:id', (req: Request, res: Response) => {
 
         const userIndex: number = searchData.getUserIndexById(userId)
 
-        if(searchData.checkFollowers(userIndex, artistId) === true){
+        if(searchData.checkFollowingOnUser(userIndex, artistId) === true){
             res.status(403)
             throw new Error('Do you already follow this artist')
         }
@@ -201,6 +201,133 @@ app.put('/followArtist/:id', (req: Request, res: Response) => {
         data.artists[artistIndex].followers =+ 1
         data.users[userIndex].artistsFollowingId.push(artistId)
         res.status(200).send(`Are you following ${data.artists[artistIndex].name}`)
+
+    }catch(error: any){
+        res.send(error.message)
+    }
+})
+
+app.post('/createPlaylist', (req: Request, res: Response) => {
+    try{
+        const userId: number = Number(req.headers.userid)
+
+        if(verifyUser(userId) === false){
+            res.status(401).send('headers missing or invalid')
+        }
+
+        const {id, name} = req.body
+
+        if(!id || !name){
+            res.status(401)
+            throw new Error('Information is missing')
+        }
+
+        const playlist: types.Playlist | undefined = searchData.getPlaylistById(Number(id))
+
+        if(playlist){
+            res.status(403)
+            throw new Error('Playlist already exists')
+        }
+
+        const playlistToCreate = {
+            id: id,
+            name: name,
+            tracks: [],
+            idUserCreated: userId
+        }
+
+        data.playlists.push(playlistToCreate)
+        console.log(data.playlists)
+        res.status(201).send('Playlist created successfully')
+
+    }catch(error: any){
+        res.send(error.message)
+    }
+
+})
+
+app.put('/addTrackOnPlaylist', (req: Request, res: Response) => {
+    try{
+        const userId: number = Number(req.headers.userid)
+
+        if(verifyUser(userId) === false){
+            res.status(401).send('headers missing or invalid')
+        }
+
+        const {idPlaylist, idTrack} = req.query
+
+        if(!idPlaylist || !idTrack){
+            res.status(401)
+            throw new Error('Information is missing')
+        }
+
+        const playlistindex: number = searchData.getPlaylistIndexById(Number(idPlaylist))
+
+        if(playlistindex === -1){
+            res.status(404)
+            throw new Error('Playlist not found')
+        }
+
+        if(userId !== data.playlists[playlistindex].idUserCreated){
+            res.status(403)
+            throw new Error('You do not have permission to change this playlist')
+        }
+
+        const track: types.Track | undefined = searchData.getTrackById(Number(idTrack))
+
+        if(!track){
+            res.status(404)
+            throw new Error('Track not found')
+        }
+
+        if(searchData.checkTracksOnPlaylist(playlistindex, Number(idTrack)) === true){
+            res.status(403)
+            throw new Error('Track already added on playlist')
+        }
+
+        data.playlists[playlistindex].tracks.push(Number(idTrack))
+        res.status(200).send('Track added on playlist successfully')
+
+    }catch(error: any){
+        res.send(error.message)
+    }
+})
+
+app.put('/deleteTrackOnPlaylist', (req: Request, res: Response) => {
+    try{
+        const userId: number = Number(req.headers.userid)
+
+        if(verifyUser(userId) === false){
+            res.status(401).send('headers missing or invalid')
+        }
+
+        const {idPlaylist, idTrack} = req.query
+
+        if(!idPlaylist || !idTrack){
+            res.status(401)
+            throw new Error('Information is missing')
+        }
+
+        const playlistindex: number = searchData.getPlaylistIndexById(Number(idPlaylist))
+
+        if(playlistindex === -1){
+            res.status(404)
+            throw new Error('Playlist not found')
+        }
+
+        if(userId !== data.playlists[playlistindex].idUserCreated){
+            res.status(403)
+            throw new Error('You do not have permission to change this playlist')
+        }
+
+        if(searchData.checkTracksOnPlaylist(playlistindex, Number(idTrack)) === false){
+            res.status(403)
+            throw new Error('Track does not exist in the playlist')
+        }
+
+        const indexFromDelete: number = data.playlists[playlistindex].tracks.indexOf(Number(idTrack))
+        delete data.playlists[playlistindex].tracks[indexFromDelete]
+        res.status(200).send('Track deleted on playlist successfully')
 
     }catch(error: any){
         res.send(error.message)

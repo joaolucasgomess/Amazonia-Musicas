@@ -2,21 +2,21 @@ import * as types from './types'
 import { users, artists, tracks, playlists } from './data'
 
 export function getUserById(id: number): types.User | undefined {
-    let user: types.User | undefined = users.find((user) => {
+    const user: types.User | undefined = users.find((user) => {
         return user.id === id
     })
     return user
 }
 
 export function getUserIndexById(id: number): number{
-    let userIndex: number = users.findIndex((user) => {
+    const userIndex: number = users.findIndex((user) => {
         return user.id === id
     })
     return userIndex
 }
 
-export function checkFollowers(index: number, artistId: number): boolean{
-    let alreadyFollow: number = users[index].artistsFollowingId.findIndex((id) => {
+export function checkFollowingOnUser(index: number, artistId: number): boolean{
+    const alreadyFollow: number = users[index].artistsFollowingId.findIndex((id) => {
         return id === artistId
     })
 
@@ -24,36 +24,44 @@ export function checkFollowers(index: number, artistId: number): boolean{
 }
 
 export function getTrackById(id: number): types.Track | undefined {
-    let track: types.Track | undefined = tracks.find((track) => {
+    const track: types.Track | undefined = tracks.find((track) => {
         return track.id === id
     })
     return track
 }
 
 export function getArtistById(id: number): types.Artist | undefined {
-    let artist: types.Artist | undefined = artists.find((artist) => {
+    const artist: types.Artist | undefined = artists.find((artist) => {
         return artist.id === id
     })
     return artist
 }
 
 export function getArtistIndexById(id: number){
-    let artistIndex: number = artists.findIndex((artist) => {
+    const artistIndex: number = artists.findIndex((artist) => {
         return artist.id === id
     })
     return artistIndex
 }
 
 export function getPlaylistById(id: number): types.Playlist | undefined {
-    let playlist: types.Playlist | undefined = playlists.find((playlist) => {
+    const playlist: types.Playlist | undefined = playlists.find((playlist) => {
         return playlist.id === id
     })
     return playlist
 }
 
 export function getPlaylistIndexById(id: number){
-    let playlistIndex: number = playlists.findIndex((playlist) => {
+    const playlistIndex: number = playlists.findIndex((playlist) => {
         return playlist.id === id
     })
     return playlistIndex
+}
+
+export function checkTracksOnPlaylist(indexPlaylist: number, idTrack: number): boolean{
+    const trackAlreadyAdded: number = playlists[indexPlaylist].tracks.findIndex((track) => {
+        return idTrack === track
+    })
+
+    return trackAlreadyAdded === -1 ? false : true
 }
