@@ -30,3 +30,8 @@ export type SignupInputDTO = {
     email: string,
     password: string
 }
+
+export type LoginInputDTO = {
+    email: string,
+    password: string
+}

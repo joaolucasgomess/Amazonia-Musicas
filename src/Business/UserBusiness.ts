@@ -5,6 +5,7 @@ import { Authenticator } from '../services/Authenticator'
 import { HashManager } from '../services/HashManager'
 import { generatedId } from '../services/IdGenerator'
 import { SignupInputDTO } from '../types/types'
+import { LoginInputDTO } from '../types/types'
 
 export class UserBusiness {
     private userData: IUserData
@@ -36,6 +37,33 @@ export class UserBusiness {
             const user = new User(id, name, email, hashedPassword)
             await this.userData.insertUser(user)
             const token = this.authenticator.generateToken({ id })
+            return token
+        }catch(err: any){
+            throw new CustomError(err.message, err.statusCode)
+        }
+    }
+
+    login = async(input: LoginInputDTO) => {
+        try{
+            const { email, password } = input
+
+            if(!email || !password){
+                throw new CustomError("Campos inválidos", 422)
+            }
+
+            const user = await this.userData.getUserByEmail(email)
+
+            if(!user){
+                throw new CustomError("Usuário ainda não cadastrado", 404)
+            }
+
+            const passwordIsCorrect = await this.hashManager.compare(password, user.password)
+
+            if(!passwordIsCorrect){ 
+                throw new CustomError("Senha incorreta", 401)
+            }
+
+            const token = this.authenticator.generateToken({ id: user.id })
             return token
         }catch(err: any){
             throw new CustomError(err.message, err.statusCode)
