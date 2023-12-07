@@ -24,3 +24,9 @@ export type User = {
     userName: string
     artistsFollowingId: number[] 
 }
+
+export type SignupInputDTO = {
+    name: string,
+    email: string,
+    password: string
+}

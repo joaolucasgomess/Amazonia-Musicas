@@ -1,16 +1,31 @@
 import express from 'express'
 import { Request, Response } from 'express'
 import cors from 'cors'
-import * as data from './data'
-import * as searchData from './searchData'
-import * as types from './types'
+import dotenv from 'dotenv'
+import * as data from './Utils/data'
+import * as searchData from './services/searchData'
+import * as types from './types/types'
+import { userRouter } from './routes/userRouter'
+
+dotenv.config()
 
 const app = express()
 
 app.use(express.json())
 app.use(cors())
 
-function verifyUser(id: number): boolean{
+app.use((req, res, next) => {
+    console.log(`Recebido ${req.method} em ${req.url}`)
+    next()
+})
+
+app.use('/user/', userRouter)
+
+app.all("*", (req, res) => {
+    res.status(404).send(`Não encontrado: ${req.method} ${req.url}`);
+})
+
+/*function verifyUser(id: number): boolean{
     const user: types.User | undefined = searchData.getUserById(id)
 
     return !user ? false : true
@@ -406,7 +421,7 @@ app.delete('/deletePlaylist/:id', (req: Request, res: Response) => {
     }catch(error: any){
         res.send(error.message)
     }
-})
+})*/
 
 app.listen(3003, () => {
     console.log('Server running at http://localhost:3003')

@@ -1,5 +1,5 @@
-import * as types from './types'
-import { users, artists, tracks, playlists } from './data'
+import * as types from '../types/types'
+import { users, artists, tracks, playlists } from '../Utils/data'
 
 export function getUserById(id: number): types.User | undefined {
     const user: types.User | undefined = users.find((user) => {

@@ -1,4 +1,4 @@
-import { Playlist, Track, Artist, User} from './types'
+import { Playlist, Track, Artist, User} from '../types/types'
 
 export let users: User[] = [
     {
