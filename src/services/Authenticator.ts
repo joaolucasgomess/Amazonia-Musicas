@@ -1,4 +1,7 @@
 import * as jwt from 'jsonwebtoken'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 export class Authenticator {
 
@@ -10,7 +13,7 @@ export class Authenticator {
 
     getTokenData = (token: string): AuthenticationData => {
         try{
-            const decoded = jwt.verify(token, process.env.JWT_SECRET as string)
+            const decoded = jwt.verify(token, process.env.JWT_KEY as string)
             return decoded as AuthenticationData
         } catch(e: any) {
             if(e.message.includes('jwt expired')){

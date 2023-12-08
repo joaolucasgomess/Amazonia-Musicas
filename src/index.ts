@@ -6,6 +6,7 @@ import * as data from './Utils/data'
 import * as searchData from './services/searchData'
 import * as types from './types/types'
 import { userRouter } from './routes/userRouter'
+import { trackRouter } from './routes/trackRouter'
 
 dotenv.config()
 
@@ -20,6 +21,7 @@ app.use((req, res, next) => {
 })
 
 app.use('/user/', userRouter)
+app.use('/tracks/', trackRouter)
 
 app.all("*", (req, res) => {
     res.status(404).send(`Não encontrado: ${req.method} ${req.url}`);

@@ -3,6 +3,7 @@ import User from '../model/User'
 import { db } from '../Data/Connection'
 
 export default class UserData implements IUserData {
+    
     async getUserByEmail(email: string): Promise<User | null> {
         try{
             const result = await db
@@ -22,10 +23,10 @@ export default class UserData implements IUserData {
                 }
 
                 user = new User(
-                    result[0].id,
-                    result[0].name,
-                    result[0].email,
-                    result[0].password
+                    result[0].uuid_user,
+                    result[0].user_name,
+                    result[0].user_email,
+                    result[0].user_password
                 )
 
                 return user
