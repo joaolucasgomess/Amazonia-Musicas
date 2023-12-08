@@ -9,5 +9,5 @@ const trackBusiness = new TrackBusiness(new TrackData())
 const trackController = new TrackController(trackBusiness)
 
 trackRouter.get('/allTracks', trackController.getAllTracks)
-//trackRouter.get('/searchTrack/:id', trackController.getTrackById)
+trackRouter.get('/searchTrack/:id', trackController.getTrackById)
 //trackRouter.post('/addTrack', trackController.addTrack)

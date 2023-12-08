@@ -14,7 +14,7 @@ export class TrackController {
         }
     }
 
-    /*getTrackById = async (req: Request, res: Response): Promise<void> => {
+    getTrackById = async (req: Request, res: Response): Promise<void> => {
         try{
             const token = req.headers.authorization as string
             const id = req.params.id
@@ -25,7 +25,7 @@ export class TrackController {
         }
     }
 
-    addTrack = async (req: Request, res: Response): Promise<void> => {
+    /*addTrack = async (req: Request, res: Response): Promise<void> => {
         try{
             const token = req.headers.authorization as string
             const { name, artist, url } = req.body

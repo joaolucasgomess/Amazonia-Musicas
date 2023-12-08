@@ -18,7 +18,7 @@ export default class UserData implements IUserData {
 
                 let user: User | null = null
 
-                if(result.length === 0){
+                if(!result.length){
                     return null
                 }
 
