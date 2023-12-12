@@ -18,7 +18,7 @@ export class TrackController {
         try{
             const token = req.headers.authorization as string
             const id = req.params.id
-            const trackById = await this.getTrackById(token, id)
+            const trackById = await this.trackBusiness.getTrackById(token, id)
             res.status(200).send({ trackById })
         }catch(err: any){
             res.status(err.statusCode || 400).send({ error: err.message })
