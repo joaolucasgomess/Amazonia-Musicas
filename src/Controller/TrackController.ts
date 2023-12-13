@@ -25,14 +25,14 @@ export class TrackController {
         }
     }
 
-    /*addTrack = async (req: Request, res: Response): Promise<void> => {
+    addTrack = async (req: Request, res: Response): Promise<void> => {
         try{
-            const token = req.headers.authorization as string
+            const token = req.headers.authorization as string 
             const { name, artist, url } = req.body
-            await this.addTrack(token, { name, artist, url })
+            await this.trackBusiness.addTrack(token, { name, artist, url })
             res.status(201).send("Track adicionada com sucesso")
         }catch(err: any){
             res.status(err.statusCode || 400).send({ error: err.message })
         }
-    }*/
+    }
 }

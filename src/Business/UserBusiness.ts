@@ -38,6 +38,7 @@ export class UserBusiness {
             await this.userData.insertUser(user)
             const token = this.authenticator.generateToken({ id })
             return token
+
         }catch(err: any){
             throw new CustomError(err.message, err.statusCode)
         }
@@ -65,6 +66,7 @@ export class UserBusiness {
 
             const token = this.authenticator.generateToken({ id: user.id })
             return token
+            
         }catch(err: any){
             throw new CustomError(err.message, err.statusCode)
         }
