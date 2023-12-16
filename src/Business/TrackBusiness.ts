@@ -9,8 +9,8 @@ export class TrackBusiness {
     private trackData: ITrackData
     private authenticator: Authenticator
 
-    constructor(userDataRepository: ITrackData){
-        this.trackData = userDataRepository
+    constructor(trackDataRepository: ITrackData){
+        this.trackData = trackDataRepository
         this.authenticator = new Authenticator()
     }
 

@@ -1,12 +1,10 @@
 import express from 'express'
-import { Request, Response } from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
-import * as data from './Utils/data'
-import * as searchData from './services/searchData'
-import * as types from './types/types'
 import { userRouter } from './routes/userRouter'
 import { trackRouter } from './routes/trackRouter'
+import { artistRouter } from './routes/artistRouter'
+import { playlistRouter } from './routes/playlistRouter'
 
 dotenv.config()
 
@@ -20,173 +18,16 @@ app.use((req, res, next) => {
     next()
 })
 
-app.use('/user/', userRouter)
-app.use('/tracks/', trackRouter)
+app.use('/User/', userRouter)
+app.use('/Tracks/', trackRouter)
+app.use('/Artists/', artistRouter)
+app.use('/Playlist/', playlistRouter)
 
 app.all("*", (req, res) => {
     res.status(404).send(`Não encontrado: ${req.method} ${req.url}`);
 })
 
-/*function verifyUser(id: number): boolean{
-    const user: types.User | undefined = searchData.getUserById(id)
-
-    return !user ? false : true
-}
-
-app.get('/allTracks', (req: Request, res: Response) => {
-    try{
-        const userId: number = Number(req.headers.userid)
-
-        if(verifyUser(userId) === false){
-            res.status(401).send('headers missing, invalid or user not found')
-        }
-
-        if(data.tracks.length === 0){
-            res.status(404)
-            throw new Error('No tracks found')
-        }
-
-        res.status(200).send(data.tracks)
-
-    }catch(error: any){
-        res.send(error.message)
-    }
-})
-
-app.get('/searchTrack/:id', (req: Request, res: Response) => {
-    try{
-        const userId: number = Number(req.headers.userid)
-
-        if(verifyUser(userId) === false){
-            res.status(401).send('headers missing or invalid')
-        }
-
-        const track: types.Track | undefined = searchData.getTrackById(Number(req.params.id))
-        
-        if(!track){
-            res.status(404)
-            throw new Error('Track not found')
-        }
-
-        res.status(200).send(track)
-
-    }catch(error: any){
-        res.send(error.message)
-    }
-})
-
-app.post('/addTrack', (req: Request, res: Response) => {
-    try{
-        const userId: number = Number(req.headers.userid)
-
-        if(verifyUser(userId) === false){
-            res.status(401).send('headers missing or invalid')
-        }
-
-        const {id, name, artistId, url, idUserAdded} = req.body
-        
-        if(!id || !name || !artistId || !url){
-            res.status(401)
-            throw new Error('Information is missing')
-        }
-
-        const track: types.Track | undefined = searchData.getTrackById(Number(id))
-
-        if(track){
-            res.status(403)
-            throw new Error('Track already exists')
-        }
-
-        const artist: types.Artist | undefined = searchData.getArtistById(Number(artistId))
-
-        if(!artist){
-            res.status(300)
-            throw new Error('The artist does not exist yet, add him first')
-        }
-
-        const trackToAdd: types.Track = {
-            id: id,
-            name: name,
-            artistId: artistId,
-            url: url,
-            idUserAdded: userId
-        }
-
-        data.tracks.push(trackToAdd)
-        res.status(201).send('Track added successfully')
-
-    }catch(error: any){
-        res.send(error.message)
-    }
-})
-
-app.post('/addArtist', (req: Request, res: Response) => {
-    try{
-        const userId: number = Number(req.headers.userid)
-
-        if(verifyUser(userId) === false){
-            res.status(401).send('headers missing or invalid')
-        }
-
-        const {id, name} = req.body
-
-        if(!id || !name){
-            res.status(401)
-            throw new Error('Information is missing')
-        }
-
-        const artist: types.Artist | undefined = searchData.getArtistById(Number(id))
-
-        if(artist){
-            res.status(403)
-            throw new Error('Artist already exists')
-        }
-
-        const artistToAdd = {
-            id: id,
-            name: name,
-            followers: 0
-        }
-
-        data.artists.push(artistToAdd)
-        res.status(201).send('Artist added successfully')
-
-    }catch(error: any){
-        res.send(error.message)
-    } 
-})
-
-app.post('/addUser', (req: Request, res: Response) => {
-    try{
-        const {id, userName} = req.body
-
-        if(!id || !userName){
-            res.status(401)
-            throw new Error('Information is missing')
-        }
-
-        const user: types.User | undefined = searchData.getUserById(Number(id))
-
-        if(user){
-            res.status(403)
-            throw new Error('User already exists')
-        }
-
-        const userToAdd: types.User = {
-            id: id,
-            userName: userName,
-            artistsFollowingId: [] 
-        }
-
-        data.users.push(userToAdd)
-        res.status(201).send('User added successfully')
-
-    }catch(error: any){
-        res.send(error.message)
-    }
-})
-
-app.put('/followArtist/:id', (req: Request, res: Response) => {
+/*app.put('/followArtist/:id', (req: Request, res: Response) => {
     try{
         const userId: number = Number(req.headers.userid)
 
