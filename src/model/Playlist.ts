@@ -22,8 +22,8 @@ export default class Track {
         this._idUserCreated = value
     }
 
-    public get tracks(): string[] {
-        return this._tracks
+    public get tracks(): string[] | undefined {
+        return this._tracks 
     }
     public set tracks(value: string[]) {
         this._tracks = value
@@ -32,7 +32,7 @@ export default class Track {
     constructor(
         private _id: string,
         private _name: string,
-        private _tracks: string[],
         private _idUserCreated: string,
+        private _tracks?: string[]
     ){}
 }
