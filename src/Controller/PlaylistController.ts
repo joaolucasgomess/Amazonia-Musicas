@@ -60,15 +60,15 @@ export class PlaylistController {
     addTrackOnPlaylist = async (req: Request, res: Response): Promise<void> => {
         try{
             const token = req.headers.authorization as string
-            const { playlistId, track } = req.body
-            await this.playlistBusiness.addTrackOnPlaylist(token, { playlistId, track })
+            const { playlistId, trackId } = req.body
+            await this.playlistBusiness.addTrackOnPlaylist(token, playlistId, trackId)
             res.status(201).send('Música adicionada com sucesso à Playlist')
         }catch(err: any){
             res.status(err.statusCode || 400).send({ error: err.message })
         }
     }
 
-    alterNamePlaylist = async (req: Request, res: Response): Promise<void> => {
+   /* alterNamePlaylist = async (req: Request, res: Response): Promise<void> => {
         try{
             const token = req.headers.authorization as string
             const { playlistId, newName } = req.query
@@ -98,5 +98,5 @@ export class PlaylistController {
         }catch(err: any){
             res.status(err.statusCode || 400).send({ error: err.message })
         }
-    }
+    }*/
 }

@@ -14,3 +14,8 @@ export type AddTrackInputDTO = {
     artist: string, 
     url: string
 }
+
+export type AddPlaylistInputDTO = {
+    name: string,
+    tracks: string[]
+}

@@ -1,5 +1,5 @@
 
-export default class Track {
+export default class Playlist {
 
     public get id(): string {
         return this._id
