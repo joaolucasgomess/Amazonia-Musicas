@@ -1,3 +1,4 @@
+import Artist from './Artist'
 
 export default class Track {
 
@@ -15,11 +16,11 @@ export default class Track {
         this._name = value
     }
 
-    public get idArtist(): string {
-        return this._idArtist
+    public get artists(): Artist[] {
+        return this._artists
     }
-    public set idArtist(value: string) {
-        this._idArtist = value
+    public set artists(value: Artist[]) {
+        this._artists = value
     }
 
     public get url(): string {
@@ -39,7 +40,7 @@ export default class Track {
     constructor(
         private _id: string,
         private _name: string,
-        private _idArtist: string,
+        private _artists: Artist[],
         private _url: string,
         private _idUserAdded: string,
     ){}

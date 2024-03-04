@@ -15,7 +15,3 @@ export type AddTrackInputDTO = {
     url: string
 }
 
-export type AddPlaylistInputDTO = {
-    name: string,
-    tracks: string[]
-}

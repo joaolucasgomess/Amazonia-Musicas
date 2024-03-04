@@ -49,8 +49,8 @@ export class PlaylistController {
     addPlaylist = async (req: Request, res: Response): Promise<void> => {
         try{
             const token = req.headers.authorization as string
-            const { name, tracks} = req.body
-            await this.playlistBusiness.addPlaylist(token, { name, tracks })
+            const name = req.body
+            await this.playlistBusiness.addPlaylist(token, name)
             res.status(201).send('Playlist criada com sucesso')
         }catch(err: any){
             res.status(err.statusCode || 400).send({ error: err.message })

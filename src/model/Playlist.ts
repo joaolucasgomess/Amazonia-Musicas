@@ -1,4 +1,6 @@
 
+import Track from "./Track"
+
 export default class Playlist {
 
     public get id(): string {
@@ -22,10 +24,10 @@ export default class Playlist {
         this._idUserCreated = value
     }
 
-    public get tracks(): string[] | undefined {
+    public get tracks(): Track[] | undefined {
         return this._tracks 
     }
-    public set tracks(value: string[]) {
+    public set tracks(value: Track[]) {
         this._tracks = value
     }
 
@@ -33,6 +35,6 @@ export default class Playlist {
         private _id: string,
         private _name: string,
         private _idUserCreated: string,
-        private _tracks?: string[]
+        private _tracks?: Track[]
     ){}
 }

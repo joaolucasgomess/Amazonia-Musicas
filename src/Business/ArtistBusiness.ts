@@ -43,4 +43,32 @@ export class ArtistBusiness {
             throw new CustomError(err.message, err.statusCode)
         }
     }
+
+    getArtistById = async (token: string, id: string): Promise<Artist> => {
+        try{
+            if(!token){
+                throw new CustomError("Token inexistente", 442)
+            }
+    
+            const tokenData = this.authenticator.getTokenData(token)
+    
+            if(!tokenData){
+                throw new CustomError("Token inválido", 401)
+            }
+
+            if(!id){
+                throw new CustomError("É necessário informar um Id", 422)
+            }
+
+            const artistById = await this.artistData.selectArtistById(id)
+
+            if(!artistById){
+                throw new CustomError("Playlist não existe", 404)
+            }
+
+            return artistById
+        }catch(err: any){
+            throw new CustomError(err.message, err.statusCode)
+        } 
+    }
 }

@@ -9,3 +9,4 @@ const artistBusiness = new ArtistBusiness(new ArtistData())
 const artistController = new ArtistController(artistBusiness)
 
 artistRouter.post('/addArtist', artistController.addArtist)
+artistRouter.get('/:id', artistController.getArtistById)

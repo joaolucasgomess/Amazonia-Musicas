@@ -18,10 +18,10 @@ app.use((req, res, next) => {
     next()
 })
 
-app.use('/User/', userRouter)
-app.use('/Tracks/', trackRouter)
-app.use('/Artists/', artistRouter)
-app.use('/Playlist/', playlistRouter)
+app.use('/user/', userRouter)
+app.use('/tracks/', trackRouter)
+app.use('/artist/', artistRouter)
+app.use('/playlist/', playlistRouter)
 
 app.all("*", (req, res) => {
     res.status(404).send(`Não encontrado: ${req.method} ${req.url}`);

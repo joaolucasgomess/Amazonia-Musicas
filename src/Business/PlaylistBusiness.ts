@@ -2,19 +2,21 @@ import Playlist from '../model/Playlist'
 import Track_Playlist from '../model/Track_Playlist'
 import { IPlaylistData } from '../model/InterfacePlaylist'
 import { ITrackData } from '../model/InterfaceTrackData'
+import { IArtistData } from '../model/InterfaceArtistData'
 import { Authenticator } from '../services/Authenticator'
 import { generatedId } from '../services/IdGenerator'
 import { CustomError } from '../Utils/CustomError'
-import { AddPlaylistInputDTO } from '../types/types'
 
 export class PlaylistBusiness  {
     private playlistData: IPlaylistData
     private trackData: ITrackData
+    private artistData: IArtistData
     private authenticator: Authenticator
     
-    constructor(playlistRepository: IPlaylistData, trackRepository: ITrackData) {
+    constructor(playlistRepository: IPlaylistData, trackRepository: ITrackData, artistRepository: IArtistData) {
         this.playlistData = playlistRepository
         this.trackData = trackRepository
+        this.artistData = artistRepository
         this.authenticator = new Authenticator()
     }
 
@@ -63,6 +65,10 @@ export class PlaylistBusiness  {
             if(!playlistById){
                 throw new CustomError("Playlist não existe", 404)
             }
+
+            const trackOnPlaylist = await this.trackData.selectTracksOnPlaylist(id)
+            playlistById.tracks = trackOnPlaylist
+            //TODO 
 
             return playlistById
         }catch(err: any){
@@ -122,7 +128,7 @@ export class PlaylistBusiness  {
         }
     }
 
-    addPlaylist = async(token: string, newPlaylist: AddPlaylistInputDTO): Promise<void> => {
+    addPlaylist = async(token: string, name: string): Promise<void> => {
         try{
             if(!token){
                 throw new CustomError("Token inexistente", 442)
@@ -134,14 +140,12 @@ export class PlaylistBusiness  {
                 throw new CustomError("Token inválido", 401)
             }
 
-            const { name, tracks } = newPlaylist
-
             if(!name){
                 throw new CustomError("É necessário informar um nome", 422)
             }
 
             const id = generatedId()
-            const playlist = new Playlist(id, name, tokenData.id, tracks)
+            const playlist = new Playlist(id, name, tokenData.id)
             await this.playlistData.insertNewPlaylist(playlist)
         }catch(err: any){
             throw new CustomError(err.message, err.statusCode)

@@ -109,6 +109,44 @@ export default class TrackData implements ITrackData {
         }
     }
 
+    async selectTracksOnPlaylist(playlistId: string): Promise<Track[]> {
+        try{
+            const result = await db('track as t')
+                .select(
+                    't.uuid_track',
+                    't.track_name',
+                    't.uuid_artist',
+                    't.url',
+                    't.uuid_user_added'
+                )
+                .join(
+                    'track_playlist as tp',
+                    't.uuid_track', 
+                    'tp.uuid_track'
+                )
+                .join(
+                    'playlist as p',
+                    'p.uuid_playlist', 
+                    'tp.uuid_playlist'
+                )
+                .where('p.uuid_playlist', playlistId)
+
+                const tracksOnPlaylist = result.map((track) => {
+                    return new Track(
+                        track.uuid_track,
+                        track.track_name,
+                        track.uuid_artist,
+                        track.url,
+                        track.uuid_user_added
+                    )
+                })
+
+                return tracksOnPlaylist
+        }catch(err: any){
+            throw new Error(err.message)
+        }
+    }
+
     async createTrack(newTrack: Track): Promise<void> {
         try{
             await db('track')
@@ -116,8 +154,7 @@ export default class TrackData implements ITrackData {
                     uuid_track: newTrack.id,
                     track_name: newTrack.name,
                     url: newTrack.url,
-                    uuid_user_added: newTrack.idUserAdded,
-                    uuid_artist: newTrack.idArtist
+                    uuid_user_added: newTrack.idUserAdded
                 })
         }catch(err: any){
             throw new Error(err.message)
