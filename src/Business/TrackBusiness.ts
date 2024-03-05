@@ -78,26 +78,27 @@ export class TrackBusiness {
                 throw new CustomError("Token inválido", 401)
             } 
             
-            const { name, artist, url } = newTrackInput
+            const { name, artists, url } = newTrackInput
 
-            if(!name || !artist || !url){
+            if(!name || !artists || !url){
                 throw new CustomError("Campos inválidos", 422)
             }
 
-            const trackByUrl = await this.trackData.selectTrackByUrl(url)
+            const trackByUrl = await this.trackData.selectTrackByUrl(url) // verificar 
 
             if(trackByUrl){
                 throw new CustomError("Música já existe", 403)
             }
 
-            const trackArtist = await this.trackData.selectTrackArtist(artist)
+            const trackArtist = await this.trackData.selectTrackArtist(artists) // buscar método da business do Artist e não definir metodo return Artist da TrackData
 
             if(!trackArtist){
                 throw new CustomError("O artista informado ainda não foi cadastrado", 404)
             }
 
             const id = generatedId()
-            const newTrack = new Track(id, name, artist, url, tokenData.id)
+            // estanciar os artistas da musica
+            const newTrack = new Track(id, name, artists, url, tokenData.id)
             await this.trackData.createTrack(newTrack)
 
         }catch(err: any){

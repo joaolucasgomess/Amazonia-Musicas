@@ -86,7 +86,7 @@ export default class TrackData implements ITrackData {
             throw new Error(err.message)
         } 
     }
-    async selectTrackArtist(id: string): Promise<Artist | null> {
+    async selectTrackArtist(id: string): Promise<Artist | null> { 
         try{
             const result = await db('artist')
                 .select(

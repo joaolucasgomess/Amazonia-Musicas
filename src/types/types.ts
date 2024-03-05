@@ -1,3 +1,5 @@
+import Artist from '../model/Artist'
+
 export type SignupInputDTO = {
     name: string,
     email: string,
@@ -11,7 +13,7 @@ export type LoginInputDTO = {
 
 export type AddTrackInputDTO = {
     name: string, 
-    artist: string, 
+    artists: string[], 
     url: string
 }
 

@@ -66,8 +66,9 @@ export class PlaylistBusiness  {
                 throw new CustomError("Playlist não existe", 404)
             }
 
-            const trackOnPlaylist = await this.trackData.selectTracksOnPlaylist(id)
+            const trackOnPlaylist = await this.trackData.selectTracksOnPlaylist(id) // inves de acessar a camada de dados, ter um metodo na business de track
             playlistById.tracks = trackOnPlaylist
+            // executar um metodo da business de Artist ou ja trazer os artistas no metodo acima(melhor opção)
             //TODO 
 
             return playlistById

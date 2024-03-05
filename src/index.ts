@@ -19,7 +19,7 @@ app.use((req, res, next) => {
 })
 
 app.use('/user/', userRouter)
-app.use('/tracks/', trackRouter)
+app.use('/track/', trackRouter)
 app.use('/artist/', artistRouter)
 app.use('/playlist/', playlistRouter)
 
