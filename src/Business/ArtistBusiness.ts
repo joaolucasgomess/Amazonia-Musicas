@@ -71,4 +71,22 @@ export class ArtistBusiness {
             throw new CustomError(err.message, err.statusCode)
         } 
     }
+
+    getArtistsOnTrack = async (trackId: string): Promise<Artist[]> => {
+        try{
+            if(!trackId){
+                throw new CustomError('É necessário informar um Id', 422)
+            }
+
+            const artistOnTrack = await this.artistData.selectArtistOnTrack(trackId)
+
+            if(!artistOnTrack){
+                throw new CustomError('Artista não encontrado', 404)
+            }
+
+            return artistOnTrack
+        }catch(err: any){
+            throw new CustomError(err.message, err.statusCode)
+        }
+    }
 }

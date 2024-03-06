@@ -1,5 +1,7 @@
 import { CustomError } from '../Utils/CustomError'
 import { ITrackData } from '../model/InterfaceTrackData'
+import { IArtistData } from '../model/InterfaceArtistData'
+import { ArtistBusiness } from './ArtistBusiness'
 import { Authenticator } from '../services/Authenticator'
 import { AddTrackInputDTO } from '../types/types'
 import { generatedId } from '../services/IdGenerator'
@@ -7,10 +9,12 @@ import  Track  from '../model/Track'
 
 export class TrackBusiness {
     private trackData: ITrackData
+    private artistBusiness: ArtistBusiness
     private authenticator: Authenticator
 
-    constructor(trackDataRepository: ITrackData){
+    constructor(trackDataRepository: ITrackData, artistRepository: IArtistData){
         this.trackData = trackDataRepository
+        this.artistBusiness = new ArtistBusiness(artistRepository)
         this.authenticator = new Authenticator()
     }
 
@@ -31,7 +35,7 @@ export class TrackBusiness {
             if(!allTracks.length){
                 throw new CustomError("Ainda não existem músicas adicionadas", 404)
             }
-            
+            // solucionar como puxar o nome dos artistas na nova modelagem
             return allTracks
         }catch(err: any){
             throw new CustomError(err.message, err.statusCode)
@@ -60,6 +64,14 @@ export class TrackBusiness {
                 throw new CustomError("Música ainda não cadastrada", 404)   
             }
 
+            const artistsOnTrack = await this.artistBusiness.getArtistsOnTrack(id)
+
+            if(!artistsOnTrack){
+                throw new CustomError('Musica sem artistas cadastrados', 404)
+            }
+
+            trackById.artists = artistsOnTrack
+
             return trackById 
         }catch(err: any){
             throw new CustomError(err.message, err.statusCode)
@@ -84,13 +96,13 @@ export class TrackBusiness {
                 throw new CustomError("Campos inválidos", 422)
             }
 
-            const trackByUrl = await this.trackData.selectTrackByUrl(url) // verificar 
+            const trackByUrl = await this.trackData.selectTrackByUrl(url) 
 
             if(trackByUrl){
                 throw new CustomError("Música já existe", 403)
             }
 
-            const trackArtist = await this.trackData.selectTrackArtist(artists) // buscar método da business do Artist e não definir metodo return Artist da TrackData
+            const trackArtist = await this.trackData.selectTrackArtist(artists) // usar um Promise.all para buscar os artitas com o método da business Artist
 
             if(!trackArtist){
                 throw new CustomError("O artista informado ainda não foi cadastrado", 404)

@@ -16,7 +16,7 @@ export default class Track {
         this._name = value
     }
 
-    public get artists(): Artist[] {
+    public get artists(): Artist[] | undefined {
         return this._artists
     }
     public set artists(value: Artist[]) {
@@ -40,8 +40,8 @@ export default class Track {
     constructor(
         private _id: string,
         private _name: string,
-        private _artists: Artist[],
         private _url: string,
         private _idUserAdded: string,
+        private _artists?: Artist[]
     ){}
 }

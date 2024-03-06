@@ -37,7 +37,6 @@ export default class TrackData implements ITrackData {
                 .select(
                     'uuid_track',
                     'track_name',
-                    'uuid_artist',
                     'url',
                     'uuid_user_added'
                 )
@@ -50,7 +49,6 @@ export default class TrackData implements ITrackData {
                 return new Track(
                     result[0].uuid_track,
                     result[0].track_name,
-                    result[0].uuid_artist,
                     result[0].url,
                     result[0].uuid_user_added,
                 )
